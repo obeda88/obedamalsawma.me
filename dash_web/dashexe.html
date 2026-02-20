@@ -22,22 +22,24 @@
 
         <!-- Set the background colour of the document -->
         <style>
-            body {
-                background: #0;
-                color: #cccccc;
-                margin: 0px;
-                padding: 0px;
-                border: 0px;
+            html, body {
+                width: 100%; height: 100%;
+                background: #000000;
+                margin: 0; padding: 0; border: 0;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             canvas {
                 image-rendering: optimizeSpeed;
+                image-rendering: pixelated;
                 -webkit-interpolation-mode: nearest-neighbor;
                 -ms-touch-action: none;
                 touch-action: none;
-                margin: 0px;
-                padding: 0px;
-                border: 0px;
+                display: block;
+                /* JS will set width/height to maintain 16:9 */
             }
             :-webkit-full-screen #canvas {
                 width: 100%;
@@ -90,7 +92,7 @@
     
 
     <body>
-        <div class="gm4html5_div_class" id="gm4html5_div_id">
+            <div class="gm4html5_div_class" id="gm4html5_div_id" style="display:flex;align-items:center;justify-content:center;width:100vw;height:100vh;">
             
             <!-- Builtin injector for splash screen -->
             
@@ -108,6 +110,46 @@
         
 
         <script>window.onload = GameMaker_Init;</script>
+
+        <!-- Maintain 16:9 aspect ratio, scale canvas to fit viewport -->
+        <script>
+          (function () {
+            var GAME_W = 1280, GAME_H = 720;
+
+            function fitCanvas() {
+              var c = document.getElementById('canvas');
+              if (!c) return;
+              var vw = window.innerWidth;
+              var vh = window.innerHeight;
+              var scale = Math.min(vw / GAME_W, vh / GAME_H);
+              var w = Math.floor(GAME_W * scale);
+              var h = Math.floor(GAME_H * scale);
+              c.style.cssText = [
+                'width:'  + w + 'px',
+                'height:' + h + 'px',
+                'position:relative',
+                'top:auto', 'left:auto', 'bottom:auto', 'right:auto',
+                'transform:none',
+                'margin:0', 'padding:0', 'border:0',
+                'display:block'
+              ].join('!important;') + '!important;';
+            }
+
+            window.addEventListener('load', fitCanvas);
+            window.addEventListener('resize', fitCanvas);
+            window.addEventListener('orientationchange', function() {
+              setTimeout(fitCanvas, 150);
+            });
+
+            // Re-apply after GameMaker runner mutates canvas style
+            window.addEventListener('load', function () {
+              var c = document.getElementById('canvas');
+              if (!c) return;
+              new MutationObserver(fitCanvas)
+                .observe(c, { attributes: true, attributeFilter: ['style', 'width', 'height'] });
+            });
+          })();
+        </script>
 
         <!-- Builtin injector for injecting google analytics code -->
         
