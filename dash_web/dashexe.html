@@ -7,7 +7,7 @@
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">        
+        <meta name="viewport" content="width=1280, initial-scale=1.0, minimum-scale=0.1, maximum-scale=1.0, user-scalable=no">        
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta charset="utf-8"/>
 
@@ -22,12 +22,17 @@
 
         <!-- Set the background colour of the document -->
         <style>
-            body {
-                background: #0;
+            * { box-sizing: border-box; }
+
+            html, body {
+                width: 100%;
+                height: 100%;
+                background: #000000;
                 color: #cccccc;
-                margin: 0px;
-                padding: 0px;
-                border: 0px;
+                margin: 0;
+                padding: 0;
+                border: 0;
+                overflow: hidden;
             }
 
             canvas {
@@ -35,24 +40,26 @@
                 -webkit-interpolation-mode: nearest-neighbor;
                 -ms-touch-action: none;
                 touch-action: none;
-                margin: 0px;
-                padding: 0px;
-                border: 0px;
+                margin: 0;
+                padding: 0;
+                border: 0;
+                display: block;
             }
-            :-webkit-full-screen #canvas {
-                width: 100%;
-                height: 100%;
-            }
-            :-webkit-full-screen {
-                width: 100%;
-                height: 100%;
-            }
-            
+
+            :-webkit-full-screen #canvas { width: 100%; height: 100%; }
+            :-webkit-full-screen { width: 100%; height: 100%; }
+
             /* Custom Runner Styles */
             div.gm4html5_div_class {
-                margin: 0px;
-                padding: 0px;
-                border: 0px;
+                margin: 0;
+                padding: 0;
+                border: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #000;
             }
             div.gm4html5_login {
                 padding: 20px;
@@ -63,17 +70,44 @@
                 border-radius: 15px;
                 box-shadow: #101010 20px 20px 40px;
             }
-            div.gm4html5_cancel_button {
-                float: right;
-            }
-            div.gm4html5_login_button {
-                float: left;
-            }
-            div.gm4html5_login_header {
-                text-align: center;
-            }
+            div.gm4html5_cancel_button { float: right; }
+            div.gm4html5_login_button  { float: left; }
+            div.gm4html5_login_header  { text-align: center; }
             /* END - Custom Runner Styles */
-            
+
+            /* ── Rotate prompt (portrait only) ── */
+            #rotate-prompt {
+                display: none;
+                position: fixed;
+                inset: 0;
+                z-index: 9999;
+                background: #000;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+                font-family: sans-serif;
+                text-align: center;
+                gap: 20px;
+            }
+            #rotate-prompt svg {
+                width: 64px; height: 64px;
+                fill: #e8ff4d;
+                animation: rotateAnim 1.5s ease-in-out infinite;
+            }
+            @keyframes rotateAnim {
+                0%   { transform: rotate(0deg); }
+                50%  { transform: rotate(90deg); }
+                100% { transform: rotate(0deg); }
+            }
+            #rotate-prompt p { font-size: 16px; color: #aaa; margin: 0; }
+
+            @media (orientation: portrait) {
+                #rotate-prompt { display: flex; }
+            }
+            @media (orientation: landscape) {
+                #rotate-prompt { display: none; }
+            }
         </style>
 
         <!-- Custom PostStyle code is injected here -->
@@ -90,6 +124,14 @@
     
 
     <body>
+        <!-- Rotate prompt shown in portrait mode -->
+        <div id="rotate-prompt">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16.48 2.52c3.27 1.55 5.61 4.72 5.97 8.48h1.5C23.44 4.84 20.29 1.2 16.1.06l.38 2.46zM4.06 3.98C1.71 6.23.22 9.29 0 12.69h1.5c.16-2.99 1.45-5.72 3.44-7.73L4.06 3.98zM0 12.69C.22 16.09 1.71 19.15 4.06 21.4l.94-.94c-2-2.01-3.28-4.74-3.44-7.73H0v-.04zm16.04 11.24c4.19-1.14 7.35-4.78 7.91-11.24h-1.5c-.36 3.76-2.7 6.93-5.97 8.48l-.44 2.76zM12.45 2L8 6.45l4.45 4.45V7.45C15.69 7.95 18 10.6 18 13.8c0 3.69-3.01 6.7-6.7 6.7C7.6 20.5 4.59 17.49 4.59 13.8c0-2.07.92-3.92 2.37-5.2L5.55 7.19C3.73 8.79 2.59 11.17 2.59 13.8c0 4.5 3.65 8.1 8.11 8.1 4.5 0 8.1-3.6 8.1-8.1 0-4.26-3.3-7.79-7.5-8.1V2h1.15z"/>
+            </svg>
+            <p>Rotate your device to landscape to play</p>
+        </div>
+
         <div class="gm4html5_div_class" id="gm4html5_div_id">
             
             <!-- Builtin injector for splash screen -->
@@ -108,6 +150,71 @@
         
 
         <script>window.onload = GameMaker_Init;</script>
+
+        <!-- Scale canvas to fit screen maintaining 16:9 aspect ratio -->
+        <script>
+          (function () {
+            var GAME_W = 1280, GAME_H = 720;
+            var observer = null;
+
+            function fitCanvas() {
+              var c = document.getElementById('canvas');
+              if (!c) return;
+
+              // Temporarily disconnect observer to avoid loop
+              if (observer) observer.disconnect();
+
+              var vw = window.innerWidth;
+              var vh = window.innerHeight;
+              var scale = Math.min(vw / GAME_W, vh / GAME_H);
+              var w = Math.round(GAME_W * scale);
+              var h = Math.round(GAME_H * scale);
+
+              c.style.width  = w + 'px';
+              c.style.height = h + 'px';
+              c.style.position = 'relative';
+              c.style.top = 'auto';
+              c.style.left = 'auto';
+              c.style.bottom = 'auto';
+              c.style.right = 'auto';
+              c.style.transform = 'none';
+              c.style.margin = '0';
+
+              // Reconnect observer
+              if (observer) observer.observe(c, { attributes: true, attributeFilter: ['style'] });
+            }
+
+            function init() {
+              var c = document.getElementById('canvas');
+              if (!c) return;
+              observer = new MutationObserver(fitCanvas);
+              observer.observe(c, { attributes: true, attributeFilter: ['style'] });
+              fitCanvas();
+            }
+
+            // Try to lock to landscape on supported browsers
+            function lockLandscape() {
+              try {
+                if (screen.orientation && screen.orientation.lock) {
+                  screen.orientation.lock('landscape').catch(function(){});
+                } else if (window.screen.lockOrientation) {
+                  window.screen.lockOrientation('landscape');
+                } else if (window.screen.mozLockOrientation) {
+                  window.screen.mozLockOrientation('landscape');
+                }
+              } catch(e) {}
+            }
+
+            window.addEventListener('load', function() {
+              lockLandscape();
+              init();
+            });
+            window.addEventListener('resize', fitCanvas);
+            window.addEventListener('orientationchange', function() {
+              setTimeout(fitCanvas, 200);
+            });
+          })();
+        </script>
 
         <!-- Builtin injector for injecting google analytics code -->
         
