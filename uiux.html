@@ -3,88 +3,110 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UI / UX Design — Obeda Malsawmhlua</title>
+  <title>DASH.exe UI — Obeda Malsawmhlua</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
-      --bg: #0a0a0a; --surface: #111; --accent: #e8ff4d;
-      --white: #f0f0f0; --muted: #555; --border: rgba(255,255,255,.06);
+      --bg: #0a0a0a; --surface: #111; --surface2: #161616;
+      --accent: #e8ff4d; --white: #f0f0f0; --muted: #555; --muted2: #888;
+      --border: rgba(255,255,255,.06);
       --font-display: 'Space Grotesk', sans-serif;
       --font-body: 'Inter', sans-serif;
     }
-    html, body { width: 100%; min-height: 100%; background: var(--bg); color: var(--white); font-family: var(--font-body); cursor: none; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--white); font-family: var(--font-body); cursor: none; overflow-x: hidden; }
 
+    /* ── cursor ── */
     #cursor { position: fixed; width: 10px; height: 10px; background: var(--accent); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); mix-blend-mode: difference; }
-    #cursor-ring { position: fixed; width: 40px; height: 40px; border: 1.5px solid rgba(232,255,77,.5); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width .3s, height .3s; }
+    #cursor-ring { position: fixed; width: 40px; height: 40px; border: 1.5px solid rgba(232,255,77,.4); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width .3s, height .3s; }
 
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 28px 48px;
-    }
+    /* ── nav ── */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 28px 48px; background: linear-gradient(to bottom, rgba(10,10,10,.95) 0%, transparent 100%); }
     .nav-logo { font-family: var(--font-display); font-size: 13px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--white); text-decoration: none; }
     .nav-back { font-size: 12px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); text-decoration: none; display: flex; align-items: center; gap: 8px; transition: color .3s; }
     .nav-back:hover { color: var(--accent); }
 
-    .hero {
-      padding: 160px 48px 80px;
-      border-bottom: 1px solid var(--border);
-    }
+    /* ── hero ── */
+    .hero { padding: 160px 48px 80px; border-bottom: 1px solid var(--border); }
     .hero-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
     .hero-eyebrow::before { content: ''; display: block; width: 24px; height: 1px; background: var(--accent); }
-    .hero-title { font-family: var(--font-display); font-size: clamp(40px, 7vw, 90px); font-weight: 600; line-height: 1.0; letter-spacing: -.03em; margin-bottom: 24px; }
-    .hero-sub { font-size: 15px; font-weight: 300; color: var(--muted); max-width: 500px; line-height: 1.7; }
+    .hero-title { font-family: var(--font-display); font-size: clamp(52px, 9vw, 110px); font-weight: 700; line-height: .95; letter-spacing: -.04em; margin-bottom: 32px; }
+    .hero-title em { font-style: normal; color: var(--accent); }
+    .hero-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
+    .hero-sub { font-size: 15px; font-weight: 300; color: var(--muted); max-width: 480px; line-height: 1.8; }
+    .hero-facts { display: flex; gap: 40px; flex-shrink: 0; }
+    .fact { text-align: right; }
+    .fact-val { font-family: var(--font-display); font-size: 28px; font-weight: 600; color: var(--white); line-height: 1; }
+    .fact-label { font-size: 10px; font-weight: 400; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
 
-    .works-grid {
-      padding: 80px 48px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 2px;
+    /* ── section label ── */
+    .section-label { padding: 72px 48px 0; display: flex; align-items: center; gap: 20px; }
+    .section-label span { font-size: 10px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* ── reveal animations ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity .85s cubic-bezier(.25,.46,.45,.94), transform .85s cubic-bezier(.25,.46,.45,.94);
     }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
 
-    .work-card {
-      background: var(--surface);
-      padding: 48px 40px;
-      position: relative;
-      overflow: hidden;
-      cursor: pointer;
-      transition: background .3s;
-    }
-    .work-card:hover { background: #161616; }
-    .work-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .5s cubic-bezier(.77,0,.18,1); }
-    .work-card:hover::after { transform: scaleX(1); }
+    /* ── featured screenshot ── */
+    .featured { padding: 40px 48px 2px; }
+    .featured-img { width: 100%; background: #0f0f0f; overflow: hidden; position: relative; border: 1px solid var(--border); }
+    .featured-img img { width: 100%; height: auto; display: block; transition: transform .8s cubic-bezier(.25,.46,.45,.94); filter: brightness(.9); }
+    .featured-img:hover img { transform: scale(1.015); filter: brightness(1); }
+    .featured-caption { padding: 20px 0 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .featured-caption p { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+    .play-link { font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 8px; transition: gap .3s; }
+    .play-link:hover { gap: 14px; }
 
-    .work-img {
-      width: 100%; aspect-ratio: 16/9; background: #1a1a1a;
-      border-radius: 2px; margin-bottom: 28px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
-      overflow: hidden;
-    }
-    .work-img img { width: 100%; height: 100%; object-fit: cover; }
+    /* ── design highlights strip ── */
+    .highlights { padding: 60px 48px 2px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+    .highlight-item { background: var(--surface); padding: 36px 32px; }
+    .hi-num { font-size: 9px; font-weight: 500; letter-spacing: .18em; color: var(--muted); margin-bottom: 20px; }
+    .hi-title { font-family: var(--font-display); font-size: 15px; font-weight: 600; margin-bottom: 12px; color: var(--white); }
+    .hi-desc { font-size: 12px; font-weight: 300; color: var(--muted); line-height: 1.8; }
+    .hi-accent { color: var(--accent); font-weight: 500; }
 
-    .work-num { font-size: 10px; font-weight: 500; letter-spacing: .15em; color: var(--muted); margin-bottom: 12px; }
-    .work-title { font-family: var(--font-display); font-size: 20px; font-weight: 600; margin-bottom: 10px; transition: color .3s; }
-    .work-card:hover .work-title { color: var(--accent); }
-    .work-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-    .tag { font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; padding: 5px 12px; border: 1px solid var(--border); border-radius: 100px; color: var(--muted); }
+    /* ── character cards ── */
+    .cards-grid { padding: 40px 48px 2px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+    .card-item { background: var(--surface); overflow: hidden; position: relative; }
+    .card-item img { width: 100%; height: auto; display: block; transition: transform .7s cubic-bezier(.25,.46,.45,.94), filter .5s; filter: brightness(.88) saturate(.85); }
+    .card-item:hover img { transform: scale(1.04); filter: brightness(1) saturate(1); }
+    .card-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 16px 20px; background: linear-gradient(transparent, rgba(0,0,0,.75)); opacity: 0; transition: opacity .4s; }
+    .card-item:hover .card-overlay { opacity: 1; }
+    .card-name { font-family: var(--font-display); font-size: 13px; font-weight: 600; letter-spacing: .06em; color: var(--white); }
 
-    .empty-state { padding: 80px 48px; text-align: center; }
-    .empty-state h3 { font-family: var(--font-display); font-size: 22px; font-weight: 500; color: var(--muted); margin-bottom: 12px; }
-    .empty-state p { font-size: 13px; color: #333; }
+    /* ── icons row ── */
+    .icons-section { padding: 40px 48px; }
+    .icons-label { font-size: 10px; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin-bottom: 28px; }
+    .icons-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .icon-item { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; background: var(--surface); border: 1px solid var(--border); transition: transform .4s cubic-bezier(.34,1.56,.64,1), border-color .3s; flex-shrink: 0; }
+    .icon-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .icon-item:hover { transform: translateY(-6px) scale(1.08); border-color: rgba(232,255,77,.35); }
 
-    footer { padding: 48px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    /* ── footer ── */
+    footer { padding: 48px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 80px; }
     footer span { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
     footer a { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color .3s; }
     footer a:hover { color: var(--accent); }
 
+    @media (max-width: 900px) {
+      .highlights { grid-template-columns: 1fr; }
+    }
     @media (max-width: 768px) {
       nav { padding: 20px 24px; }
       .hero { padding: 120px 24px 60px; }
-      .works-grid { padding: 60px 24px; grid-template-columns: 1fr; }
+      .hero-facts { gap: 24px; }
+      .fact { text-align: left; }
+      .section-label, .featured, .highlights, .cards-grid, .icons-section { padding-left: 24px; padding-right: 24px; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .icon-item { width: 60px; height: 60px; }
       footer { padding: 32px 24px; }
     }
   </style>
@@ -98,29 +120,108 @@
     <a href="index.html" class="nav-back">← Back</a>
   </nav>
 
+  <!-- ── HERO ── -->
   <section class="hero">
-    <div class="hero-eyebrow">03 / UI / UX Design</div>
-    <h1 class="hero-title">Interface<br/>Design</h1>
-    <p class="hero-sub">User-centred interfaces designed to be intuitive, minimal, and purposeful — bridging human empathy with clean digital form.</p>
-  </section>
-
-  <section class="works-grid">
-    <!-- Add work cards here. Example structure:
-    <div class="work-card">
-      <div class="work-img"><img src="path/to/image.jpg" alt="Project Name" /></div>
-      <div class="work-num">01</div>
-      <div class="work-title">Project Name</div>
-      <div class="work-tags">
-        <span class="tag">Mobile</span>
-        <span class="tag">Figma</span>
+    <div class="hero-eyebrow">03 / UI · UX Design</div>
+    <h1 class="hero-title">DASH<em>.</em>exe<br/>Interface</h1>
+    <div class="hero-row">
+      <p class="hero-sub">DASH.exe is a 2D pixel video game — wave-based, fast-paced, pixel art genre. Every UI element from the character select screen to stat cards was designed from scratch to feel native to the pixel aesthetic while staying readable and functional.</p>
+      <div class="hero-facts">
+        <div class="fact">
+          <div class="fact-val">7</div>
+          <div class="fact-label">Characters</div>
+        </div>
+        <div class="fact">
+          <div class="fact-val">2D</div>
+          <div class="fact-label">Pixel Art</div>
+        </div>
+        <div class="fact">
+          <div class="fact-val">Wave</div>
+          <div class="fact-label">Game Type</div>
+        </div>
       </div>
     </div>
-    -->
-    <div class="empty-state" style="grid-column:1/-1;">
-      <h3>Projects coming soon</h3>
-      <p>Work is being curated and will appear here shortly.</p>
+  </section>
+
+  <!-- ── FEATURED SCREENSHOT ── -->
+  <div class="section-label reveal" data-delay="0">
+    <span>In-Game UI</span>
+  </div>
+
+  <section class="featured reveal" data-delay="80">
+    <div class="featured-img">
+      <img src="assets/game/dash-screenshot.jpg" alt="DASH.exe — In-game screenshot with character select UI" />
+    </div>
+    <div class="featured-caption">
+      <p>Gameplay view + Character Select Screen — DASH.exe</p>
+      <a href="dash_web/dashexe.html" target="_blank" class="play-link">Play the Demo →</a>
     </div>
   </section>
+
+  <!-- ── DESIGN HIGHLIGHTS ── -->
+  <div class="section-label reveal" data-delay="0">
+    <span>Design Decisions</span>
+  </div>
+
+  <div class="highlights">
+    <div class="highlight-item reveal" data-delay="0">
+      <div class="hi-num">01</div>
+      <div class="hi-title">Pixel-native typography</div>
+      <div class="hi-desc">All UI text uses a <span class="hi-accent">monospaced pixel font</span>, matching the game's art style. Labels like SKILL / DESC / HEALTH keep a consistent grid structure, making info easy to scan mid-game.</div>
+    </div>
+    <div class="highlight-item reveal" data-delay="120">
+      <div class="hi-num">02</div>
+      <div class="hi-title">Character stat card system</div>
+      <div class="hi-desc">Each card encodes <span class="hi-accent">name, health, skill, description, and cooldown</span> in a compact layout. Colour hue shifts per character create instant visual identity without breaking the grid.</div>
+    </div>
+    <div class="highlight-item reveal" data-delay="240">
+      <div class="hi-num">03</div>
+      <div class="hi-title">Icon clarity at small sizes</div>
+      <div class="hi-desc">The 7 character select icons are readable at <span class="hi-accent">~64×64px</span> — key silhouettes and colour were prioritised over fine detail so players can identify characters at a glance.</div>
+    </div>
+  </div>
+
+  <!-- ── CHARACTER STAT CARDS ── -->
+  <div class="section-label reveal" data-delay="0">
+    <span>Character Stat Cards</span>
+  </div>
+
+  <div class="cards-grid">
+    <div class="card-item reveal" data-delay="0">
+      <img src="assets/game/dash-card-thinlung-sek.jpg" alt="Thinlung Sek stat card" />
+      <div class="card-overlay"><span class="card-name">Thinlung Sek</span></div>
+    </div>
+    <div class="card-item reveal" data-delay="120">
+      <img src="assets/game/dash-card-skeleton-sailo.jpg" alt="Skeleton Sailo stat card" />
+      <div class="card-overlay"><span class="card-name">Skeleton Sailo</span></div>
+    </div>
+    <div class="card-item reveal" data-delay="60">
+      <img src="assets/game/dash-card-thinlung-pink.jpg" alt="Thinlung Pink stat card" />
+      <div class="card-overlay"><span class="card-name">Thinlung Pink</span></div>
+    </div>
+    <div class="card-item reveal" data-delay="180">
+      <img src="assets/game/dash-card-domy.jpg" alt="Domy stat card" />
+      <div class="card-overlay"><span class="card-name">Domy</span></div>
+    </div>
+  </div>
+
+  <!-- ── CHARACTER SELECT ICONS ── -->
+  <div class="section-label reveal" data-delay="0">
+    <span>Character Select Icons</span>
+  </div>
+
+  <div class="icons-section reveal" data-delay="80">
+    <p class="icons-label">All 7 playable characters</p>
+    <div class="icons-row">
+      <div class="icon-item"><img src="assets/game/dash-icon-1.png" alt="Character 1" /></div>
+      <div class="icon-item"><img src="assets/game/dash-icon-2.png" alt="Character 2" /></div>
+      <div class="icon-item"><img src="assets/game/dash-icon-3.png" alt="Character 3" /></div>
+      <div class="icon-item"><img src="assets/game/dash-icon-4.png" alt="Character 4" /></div>
+      <div class="icon-item"><img src="assets/game/dash-icon-5.png" alt="Character 5" /></div>
+      <div class="icon-item"><img src="assets/game/dash-icon-6.png" alt="Character 6" /></div>
+      <div class="icon-item"><img src="assets/game/dash-icon-7.png" alt="Character 7" /></div>
+    </div>
+  </div>
 
   <footer>
     <span>Obeda Malsawmhlua — UI / UX Design</span>
@@ -128,15 +229,29 @@
   </footer>
 
   <script>
+    /* ── cursor ── */
     const cursor = document.getElementById('cursor');
     const ring   = document.getElementById('cursor-ring');
     let mx = 0, my = 0, rx = 0, ry = 0;
     document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx+'px'; cursor.style.top = my+'px'; });
     (function loop(){ rx += (mx-rx)*.12; ry += (my-ry)*.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(loop); })();
-    document.querySelectorAll('a, .work-card').forEach(el => {
-      el.addEventListener('mouseenter', () => { ring.style.width='60px'; ring.style.height='60px'; });
+    document.querySelectorAll('a, .card-item, .icon-item').forEach(el => {
+      el.addEventListener('mouseenter', () => { ring.style.width='56px'; ring.style.height='56px'; });
       el.addEventListener('mouseleave', () => { ring.style.width='40px'; ring.style.height='40px'; });
     });
+
+    /* ── scroll reveal ── */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        const delay = parseInt(el.dataset.delay || 0);
+        setTimeout(() => el.classList.add('visible'), delay);
+        observer.unobserve(el);
+      });
+    }, { threshold: 0.07, rootMargin: '0px 0px -30px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   </script>
 </body>
 </html>
