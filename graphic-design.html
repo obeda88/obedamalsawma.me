@@ -15,72 +15,108 @@
       --font-display: 'Space Grotesk', sans-serif;
       --font-body: 'Inter', sans-serif;
     }
-    html, body { width: 100%; min-height: 100%; background: var(--bg); color: var(--white); font-family: var(--font-body); cursor: none; }
+    html { scroll-behavior: smooth; }
+    body { width: 100%; min-height: 100%; background: var(--bg); color: var(--white); font-family: var(--font-body); cursor: none; overflow-x: hidden; }
 
     /* cursor */
     #cursor { position: fixed; width: 10px; height: 10px; background: var(--accent); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); mix-blend-mode: difference; }
     #cursor-ring { position: fixed; width: 40px; height: 40px; border: 1.5px solid rgba(232,255,77,.5); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width .3s, height .3s; }
 
+    /* nav */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
       padding: 28px 48px;
+      background: linear-gradient(to bottom, rgba(10,10,10,.95) 0%, transparent 100%);
     }
     .nav-logo { font-family: var(--font-display); font-size: 13px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--white); text-decoration: none; }
     .nav-back { font-size: 12px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); text-decoration: none; display: flex; align-items: center; gap: 8px; transition: color .3s; }
     .nav-back:hover { color: var(--accent); }
 
-    .hero {
-      padding: 160px 48px 80px;
-      border-bottom: 1px solid var(--border);
-    }
+    /* hero */
+    .hero { padding: 160px 48px 80px; border-bottom: 1px solid var(--border); }
     .hero-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
     .hero-eyebrow::before { content: ''; display: block; width: 24px; height: 1px; background: var(--accent); }
     .hero-title { font-family: var(--font-display); font-size: clamp(40px, 7vw, 90px); font-weight: 600; line-height: 1.0; letter-spacing: -.03em; margin-bottom: 24px; }
     .hero-sub { font-size: 15px; font-weight: 300; color: var(--muted); max-width: 500px; line-height: 1.7; }
 
-    .works-grid {
-      padding: 80px 48px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 2px;
+    /* section label */
+    .section-label {
+      padding: 64px 48px 0;
+      display: flex; align-items: center; gap: 20px;
+    }
+    .section-label span { font-size: 10px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* ── FEATURED: full-width landscape poster ── */
+    .works-featured {
+      padding: 40px 48px 2px;
     }
 
     .work-card {
       background: var(--surface);
-      padding: 48px 40px;
       position: relative;
       overflow: hidden;
       cursor: pointer;
-      transition: background .3s;
+      transition: background .4s;
+      /* scroll reveal — starts hidden */
+      opacity: 0;
+      transform: translateY(48px);
+      transition: opacity .8s cubic-bezier(.25,.46,.45,.94),
+                  transform .8s cubic-bezier(.25,.46,.45,.94),
+                  background .3s;
     }
+    .work-card.visible { opacity: 1; transform: translateY(0); }
     .work-card:hover { background: #161616; }
-    .work-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .5s cubic-bezier(.77,0,.18,1); }
+    .work-card::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 2px; background: var(--accent);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .5s cubic-bezier(.77,0,.18,1);
+    }
     .work-card:hover::after { transform: scaleX(1); }
 
-    /* placeholder image area */
+    /* image wrapper — natural proportions */
     .work-img {
-      width: 100%; aspect-ratio: 16/9; background: #1a1a1a;
-      border-radius: 2px; margin-bottom: 28px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+      width: 100%;
+      background: #141414;
       overflow: hidden;
+      position: relative;
     }
-    .work-img img { width: 100%; height: 100%; object-fit: cover; }
+    .work-img img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform .7s cubic-bezier(.25,.46,.45,.94), filter .5s ease;
+      filter: brightness(.92) saturate(.9);
+    }
+    .work-card:hover .work-img img {
+      transform: scale(1.03);
+      filter: brightness(1) saturate(1);
+    }
 
-    .work-num { font-size: 10px; font-weight: 500; letter-spacing: .15em; color: var(--muted); margin-bottom: 12px; }
-    .work-title { font-family: var(--font-display); font-size: 20px; font-weight: 600; margin-bottom: 10px; transition: color .3s; }
+    /* card body */
+    .work-body { padding: 28px 36px 36px; }
+    .work-meta { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+    .work-num { font-size: 10px; font-weight: 500; letter-spacing: .15em; color: var(--muted); }
+    .work-year { font-size: 10px; font-weight: 400; letter-spacing: .08em; color: #333; }
+    .work-title { font-family: var(--font-display); font-size: 22px; font-weight: 600; margin-bottom: 8px; transition: color .3s; line-height: 1.2; }
     .work-card:hover .work-title { color: var(--accent); }
-    .work-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-    .tag { font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; padding: 5px 12px; border: 1px solid var(--border); border-radius: 100px; color: var(--muted); }
+    .work-role { font-size: 13px; font-weight: 300; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
+    .work-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag { font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; padding: 5px 12px; border: 1px solid var(--border); border-radius: 100px; color: var(--muted); transition: border-color .3s, color .3s; }
+    .work-card:hover .tag { border-color: rgba(232,255,77,.2); color: #888; }
+    .tag.accent { border-color: rgba(232,255,77,.3); color: var(--accent); }
 
-    .empty-state {
-      padding: 80px 48px;
-      text-align: center;
+    /* ── GRID: side-by-side portrait posters ── */
+    .works-grid {
+      padding: 2px 48px 80px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
     }
-    .empty-state h3 { font-family: var(--font-display); font-size: 22px; font-weight: 500; color: var(--muted); margin-bottom: 12px; }
-    .empty-state p { font-size: 13px; color: #333; }
 
+    /* footer */
     footer { padding: 48px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
     footer span { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
     footer a { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color .3s; }
@@ -89,7 +125,10 @@
     @media (max-width: 768px) {
       nav { padding: 20px 24px; }
       .hero { padding: 120px 24px 60px; }
-      .works-grid { padding: 60px 24px; grid-template-columns: 1fr; }
+      .section-label { padding: 48px 24px 0; }
+      .works-featured { padding: 32px 24px 2px; }
+      .works-grid { padding: 2px 24px 60px; grid-template-columns: 1fr; }
+      .work-body { padding: 20px 24px 28px; }
       footer { padding: 32px 24px; }
     }
   </style>
@@ -109,21 +148,71 @@
     <p class="hero-sub">Brand identities, typography systems, and visual communication that tell stories with clarity and style.</p>
   </section>
 
-  <section class="works-grid">
-    <!-- Add work cards here. Example structure:
-    <div class="work-card">
-      <div class="work-img"><img src="path/to/image.jpg" alt="Project Name" /></div>
-      <div class="work-num">01</div>
-      <div class="work-title">Project Name</div>
-      <div class="work-tags">
-        <span class="tag">Branding</span>
-        <span class="tag">Typography</span>
+  <!-- ── FEATURED: Tawki (landscape) ── -->
+  <div class="section-label">
+    <span>Film Poster Design</span>
+  </div>
+
+  <section class="works-featured">
+    <div class="work-card" data-delay="0">
+      <div class="work-img">
+        <img src="assets/posters/tawki.jpg" alt="Tawki — Film Poster" />
+      </div>
+      <div class="work-body">
+        <div class="work-meta">
+          <span class="work-num">01</span>
+          <span class="work-year">Fadyo Picture's Production</span>
+        </div>
+        <div class="work-title">Tawki</div>
+        <div class="work-role">Cover / Poster Designer — Action · Tragedy · Thriller. Directed by Ms-i Chawngthu.</div>
+        <div class="work-tags">
+          <span class="tag accent">Cover Design</span>
+          <span class="tag">Film Poster</span>
+          <span class="tag">Mizo Cinema</span>
+          <span class="tag">Typography</span>
+        </div>
       </div>
     </div>
-    -->
-    <div class="empty-state" style="grid-column:1/-1;">
-      <h3>Projects coming soon</h3>
-      <p>Work is being curated and will appear here shortly.</p>
+  </section>
+
+  <!-- ── GRID: portrait posters ── -->
+  <section class="works-grid">
+    <div class="work-card" data-delay="100">
+      <div class="work-img">
+        <img src="assets/posters/thinlung-hliam.jpg" alt="Thinlung Hliam — Film Poster" />
+      </div>
+      <div class="work-body">
+        <div class="work-meta">
+          <span class="work-num">02</span>
+          <span class="work-year">Fadyo Picture's Production</span>
+        </div>
+        <div class="work-title">Thinlung Hliam</div>
+        <div class="work-role">Poster Design — A Christian Lovestory. Romance, Action, Comedy, Tragedy. Produced & Directed by C. Hmingthangvunga.</div>
+        <div class="work-tags">
+          <span class="tag accent">Film Poster</span>
+          <span class="tag">Mizo Cinema</span>
+          <span class="tag">Composition</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="work-card" data-delay="200">
+      <div class="work-img">
+        <img src="assets/posters/love-has-no-boundaries.jpg" alt="Love Has No Boundaries — Film Poster" />
+      </div>
+      <div class="work-body">
+        <div class="work-meta">
+          <span class="work-num">03</span>
+          <span class="work-year">Fadyo Picture's Production</span>
+        </div>
+        <div class="work-title">Love Has No Boundaries</div>
+        <div class="work-role">Poster Design — Mizo Movie. Produced & Directed by C. Hmingthangvunga.</div>
+        <div class="work-tags">
+          <span class="tag accent">Film Poster</span>
+          <span class="tag">Mizo Cinema</span>
+          <span class="tag">Visual Identity</span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -133,6 +222,7 @@
   </footer>
 
   <script>
+    /* ── cursor ── */
     const cursor = document.getElementById('cursor');
     const ring   = document.getElementById('cursor-ring');
     let mx = 0, my = 0, rx = 0, ry = 0;
@@ -142,6 +232,19 @@
       el.addEventListener('mouseenter', () => { ring.style.width='60px'; ring.style.height='60px'; });
       el.addEventListener('mouseleave', () => { ring.style.width='40px'; ring.style.height='40px'; });
     });
+
+    /* ── scroll reveal ── */
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const card = entry.target;
+        const delay = parseInt(card.dataset.delay || 0);
+        setTimeout(() => card.classList.add('visible'), delay);
+        revealObserver.unobserve(card);
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.work-card').forEach(card => revealObserver.observe(card));
   </script>
 </body>
 </html>
