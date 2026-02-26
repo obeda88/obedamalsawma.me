@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UI / UX Design — Obeda Malsawmhlua</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0a0a0a; --surface: #111; --accent: #e8ff4d;
+      --white: #f0f0f0; --muted: #555; --border: rgba(255,255,255,.06);
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+    html, body { width: 100%; min-height: 100%; background: var(--bg); color: var(--white); font-family: var(--font-body); cursor: none; }
+
+    #cursor { position: fixed; width: 10px; height: 10px; background: var(--accent); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); mix-blend-mode: difference; }
+    #cursor-ring { position: fixed; width: 40px; height: 40px; border: 1.5px solid rgba(232,255,77,.5); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width .3s, height .3s; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 28px 48px;
+    }
+    .nav-logo { font-family: var(--font-display); font-size: 13px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--white); text-decoration: none; }
+    .nav-back { font-size: 12px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); text-decoration: none; display: flex; align-items: center; gap: 8px; transition: color .3s; }
+    .nav-back:hover { color: var(--accent); }
+
+    .hero {
+      padding: 160px 48px 80px;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+    .hero-eyebrow::before { content: ''; display: block; width: 24px; height: 1px; background: var(--accent); }
+    .hero-title { font-family: var(--font-display); font-size: clamp(40px, 7vw, 90px); font-weight: 600; line-height: 1.0; letter-spacing: -.03em; margin-bottom: 24px; }
+    .hero-sub { font-size: 15px; font-weight: 300; color: var(--muted); max-width: 500px; line-height: 1.7; }
+
+    .works-grid {
+      padding: 80px 48px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 2px;
+    }
+
+    .work-card {
+      background: var(--surface);
+      padding: 48px 40px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: background .3s;
+    }
+    .work-card:hover { background: #161616; }
+    .work-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .5s cubic-bezier(.77,0,.18,1); }
+    .work-card:hover::after { transform: scaleX(1); }
+
+    .work-img {
+      width: 100%; aspect-ratio: 16/9; background: #1a1a1a;
+      border-radius: 2px; margin-bottom: 28px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+      overflow: hidden;
+    }
+    .work-img img { width: 100%; height: 100%; object-fit: cover; }
+
+    .work-num { font-size: 10px; font-weight: 500; letter-spacing: .15em; color: var(--muted); margin-bottom: 12px; }
+    .work-title { font-family: var(--font-display); font-size: 20px; font-weight: 600; margin-bottom: 10px; transition: color .3s; }
+    .work-card:hover .work-title { color: var(--accent); }
+    .work-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .tag { font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; padding: 5px 12px; border: 1px solid var(--border); border-radius: 100px; color: var(--muted); }
+
+    .empty-state { padding: 80px 48px; text-align: center; }
+    .empty-state h3 { font-family: var(--font-display); font-size: 22px; font-weight: 500; color: var(--muted); margin-bottom: 12px; }
+    .empty-state p { font-size: 13px; color: #333; }
+
+    footer { padding: 48px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    footer span { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+    footer a { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color .3s; }
+    footer a:hover { color: var(--accent); }
+
+    @media (max-width: 768px) {
+      nav { padding: 20px 24px; }
+      .hero { padding: 120px 24px 60px; }
+      .works-grid { padding: 60px 24px; grid-template-columns: 1fr; }
+      footer { padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <nav>
+    <a href="index.html" class="nav-logo">Obeda</a>
+    <a href="index.html" class="nav-back">← Back</a>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-eyebrow">03 / UI / UX Design</div>
+    <h1 class="hero-title">Interface<br/>Design</h1>
+    <p class="hero-sub">User-centred interfaces designed to be intuitive, minimal, and purposeful — bridging human empathy with clean digital form.</p>
+  </section>
+
+  <section class="works-grid">
+    <!-- Add work cards here. Example structure:
+    <div class="work-card">
+      <div class="work-img"><img src="path/to/image.jpg" alt="Project Name" /></div>
+      <div class="work-num">01</div>
+      <div class="work-title">Project Name</div>
+      <div class="work-tags">
+        <span class="tag">Mobile</span>
+        <span class="tag">Figma</span>
+      </div>
+    </div>
+    -->
+    <div class="empty-state" style="grid-column:1/-1;">
+      <h3>Projects coming soon</h3>
+      <p>Work is being curated and will appear here shortly.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>Obeda Malsawmhlua — UI / UX Design</span>
+    <a href="mailto:malsawmhlua1000@gmail.com">malsawmhlua1000@gmail.com</a>
+  </footer>
+
+  <script>
+    const cursor = document.getElementById('cursor');
+    const ring   = document.getElementById('cursor-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx+'px'; cursor.style.top = my+'px'; });
+    (function loop(){ rx += (mx-rx)*.12; ry += (my-ry)*.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(loop); })();
+    document.querySelectorAll('a, .work-card').forEach(el => {
+      el.addEventListener('mouseenter', () => { ring.style.width='60px'; ring.style.height='60px'; });
+      el.addEventListener('mouseleave', () => { ring.style.width='40px'; ring.style.height='40px'; });
+    });
+  </script>
+</body>
+</html>
