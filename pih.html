@@ -7,7 +7,7 @@
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+        <meta name ="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta charset="utf-8"/>
 
@@ -22,46 +22,23 @@
 
         <!-- Set the background colour of the document -->
         <style>
-            * {
-                box-sizing: border-box;
-            }
-
-            html, body {
-                background: #000000;
+            body {
+                background: #0;
                 color: #cccccc;
                 margin: 0px;
                 padding: 0px;
                 border: 0px;
-                width: 100%;
-                height: 100%;
-                overflow: hidden;
-            }
-
-            /* Landscape stretch: fill full viewport maintaining 16:9 aspect ratio */
-            div.gm4html5_div_class {
-                margin: 0px;
-                padding: 0px;
-                border: 0px;
-                width: 100vw;
-                height: 100vh;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: #000000;
             }
 
             canvas {
                 image-rendering: optimizeSpeed;
-                image-rendering: pixelated;
                 -webkit-interpolation-mode: nearest-neighbor;
                 -ms-touch-action: none;
                 touch-action: none;
                 margin: 0px;
                 padding: 0px;
                 border: 0px;
-                display: block;
             }
-
             :-webkit-full-screen #canvas {
                 width: 100%;
                 height: 100%;
@@ -70,30 +47,13 @@
                 width: 100%;
                 height: 100%;
             }
-
-            /* Portrait mode: rotate the content to simulate landscape */
-            @media screen and (orientation: portrait) {
-                html {
-                    transform: rotate(90deg);
-                    transform-origin: left top;
-                    width: 100vh;
-                    height: 100vw;
-                    position: absolute;
-                    top: 100%;
-                    left: 0;
-                    overflow: hidden;
-                }
-                div.gm4html5_div_class {
-                    width: 100vh;
-                    height: 100vw;
-                }
-                canvas {
-                    width: 100vh;
-                    height: 100vw;
-                }
-            }
-
+            
             /* Custom Runner Styles */
+            div.gm4html5_div_class {
+                margin: 0px;
+                padding: 0px;
+                border: 0px;
+            }
             div.gm4html5_login {
                 padding: 20px;
                 position: absolute;
@@ -136,75 +96,18 @@
             
 
             <!-- Create the canvas element the game draws to -->
-            <canvas id="canvas" width="1920" height="1080">
+            <canvas id="canvas" width="1920" height="1080" style="position: absolute; top: 50%; left: 50%; bottom: -50%; right: -50%; transform: translate(-50%, -50%);">
                 <p>Your browser doesn't support HTML5 canvas.</p>
             </canvas>
         </div>
 
         <!-- Run the game code -->
-        <script type="text/javascript" src="html5game/sachek.js?cachebust=1906785698"></script>
+        <script type="text/javascript" src="html5game/sachek.js?cachebust=1155287127"></script>
 
         <!-- Builtin injector for injecting runner path -->
         
 
-        <script>
-            // Lock orientation to landscape using Screen Orientation API
-            function lockLandscape() {
-                if (screen.orientation && screen.orientation.lock) {
-                    screen.orientation.lock('landscape').catch(function(err) {
-                        console.log('Orientation lock not supported:', err.message);
-                    });
-                } else if (window.screen.lockOrientation) {
-                    window.screen.lockOrientation('landscape');
-                } else if (window.screen.mozLockOrientation) {
-                    window.screen.mozLockOrientation('landscape');
-                } else if (window.screen.msLockOrientation) {
-                    window.screen.msLockOrientation('landscape');
-                }
-            }
-
-            // Resize canvas to fill viewport while maintaining 16:9 aspect ratio
-            function resizeCanvas() {
-                var canvas = document.getElementById('canvas');
-                if (!canvas) return;
-                var aspectRatio = 1920 / 1080;
-                var windowW = window.innerWidth;
-                var windowH = window.innerHeight;
-                var canvasW, canvasH;
-                if (windowW / windowH >= aspectRatio) {
-                    canvasH = windowH;
-                    canvasW = windowH * aspectRatio;
-                } else {
-                    canvasW = windowW;
-                    canvasH = windowW / aspectRatio;
-                }
-                canvas.style.width  = canvasW + 'px';
-                canvas.style.height = canvasH + 'px';
-            }
-
-            window.addEventListener('resize', resizeCanvas);
-            window.addEventListener('orientationchange', function() {
-                setTimeout(resizeCanvas, 200);
-            });
-
-            // Chain onto GameMaker's own onload — do NOT overwrite it.
-            // sachek.js sets window.onload = GameMaker_Init internally;
-            // we wrap it so both the game init AND our helpers fire.
-            (function() {
-                var _prevOnload = window.onload;
-                window.onload = function(e) {
-                    // Run GameMaker's own init first
-                    if (typeof _prevOnload === 'function') {
-                        _prevOnload.call(window, e);
-                    } else if (typeof GameMaker_Init === 'function') {
-                        GameMaker_Init();
-                    }
-                    // Then apply our extras
-                    lockLandscape();
-                    resizeCanvas();
-                };
-            })();
-        </script>
+        <script>window.onload = GameMaker_Init;</script>
 
         <!-- Builtin injector for injecting google analytics code -->
         
